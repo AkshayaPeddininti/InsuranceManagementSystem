@@ -17,6 +17,8 @@ import com.cognizant.insurance.repository.AgentRepository;
 import com.cognizant.insurance.repository.PolicyRepository;
 import com.cognizant.insurance.repository.RoleRepository;
 
+import jakarta.validation.Valid;
+
 @Service
 public class AgentService {
 
@@ -56,9 +58,9 @@ public class AgentService {
     }
     
  //create
-    public AgentDTO createAgent(AgentDTO agentDTO) {
+    public AgentDTO createAgent(@Valid AgentDTO agentDTO) {
         // Validate RoleID
-        int roleID = agentDTO.getRoleID();
+        int roleID = agentDTO.getRole().getRoleID();
         System.out.println("role id.........."+roleID);
         
         if (roleID != 401) {
@@ -86,7 +88,7 @@ public class AgentService {
 
 
     // Update agent
-    public AgentDTO updateAgent(int agentID, AgentDTO updatedAgentDTO) {
+    public AgentDTO updateAgent(int agentID,@Valid AgentDTO updatedAgentDTO) {
         Agent agent = agentRepository.findById(agentID)
                                      .orElseThrow(() -> new RuntimeException("Agent not found"));
 
@@ -104,7 +106,7 @@ public class AgentService {
     //'''''''''''''''''''''''''''''''''''
     //policy crud operations
     //create policy
-    public PolicyDTO createPolicyForAgent(int agentID, PolicyDTO policyDTO) {
+    public PolicyDTO createPolicyForAgent(int agentID,@Valid PolicyDTO policyDTO) {
         Agent agent = agentRepository.findById(agentID)
                 .orElseThrow(() -> new RuntimeException("Agent not found"));
 
@@ -125,7 +127,7 @@ public class AgentService {
                 .collect(Collectors.toList());
     }
     //update policy
-    public PolicyDTO updatePolicyForAgent(int policyID, PolicyDTO updatedPolicyDTO) {
+    public PolicyDTO updatePolicyForAgent(int policyID,@Valid PolicyDTO updatedPolicyDTO) {
         Policy policy = policyRepository.findById(policyID)
                 .orElseThrow(() -> new RuntimeException("Policy not found"));
 

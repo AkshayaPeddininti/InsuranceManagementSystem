@@ -7,6 +7,8 @@ import com.cognizant.insurance.dto.AgentDTO;
 import com.cognizant.insurance.dto.PolicyDTO;
 import com.cognizant.insurance.service.AgentService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/agents")
 public class AgentController {
@@ -17,7 +19,7 @@ public class AgentController {
    
  // Create agent
     @PostMapping("/add")
-    public AgentDTO createAgent(@RequestBody AgentDTO agentDTO) {
+    public AgentDTO createAgent(@Valid @RequestBody AgentDTO agentDTO) {
     	
         return agentService.createAgent(agentDTO); // Creates a new agent
     }
@@ -37,7 +39,7 @@ public class AgentController {
 
     // Update agent
     @PutMapping("/{agentID}")
-    public AgentDTO updateAgent(@PathVariable int agentID, @RequestBody AgentDTO agentDTO) {
+    public AgentDTO updateAgent(@PathVariable int agentID,@Valid @RequestBody AgentDTO agentDTO) {
         return agentService.updateAgent(agentID, agentDTO); // Updates an existing agent
     }
 
@@ -47,7 +49,7 @@ public class AgentController {
         agentService.deleteAgent(agentID); // Deletes an agent by ID
     }
     @PostMapping("/{agentID}/policies")
-    public PolicyDTO createPolicyForAgent(@PathVariable int agentID, @RequestBody PolicyDTO policyDTO) {
+    public PolicyDTO createPolicyForAgent(@PathVariable int agentID,@Valid  @RequestBody PolicyDTO policyDTO) {
         return agentService.createPolicyForAgent(agentID, policyDTO);
     }
     @GetMapping("/{agentID}/policies")
@@ -55,7 +57,7 @@ public class AgentController {
         return agentService.getPoliciesForAgent(agentID);
     }
     @PutMapping("/policies/{policyID}")
-    public PolicyDTO updatePolicyForAgent(@PathVariable int policyID, @RequestBody PolicyDTO updatedPolicyDTO) {
+    public PolicyDTO updatePolicyForAgent(@PathVariable int policyID,@Valid @RequestBody PolicyDTO updatedPolicyDTO) {
         return agentService.updatePolicyForAgent(policyID, updatedPolicyDTO);
     }
     @DeleteMapping("/policies/{policyID}")

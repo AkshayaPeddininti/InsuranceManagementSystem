@@ -14,6 +14,8 @@ import com.cognizant.insurance.dto.CustomerDTO;
 import com.cognizant.insurance.repository.CustomerRepository;
 import com.cognizant.insurance.repository.RoleRepository;
 
+import jakarta.validation.Valid;
+
 @Service
 public class CustomerService {
 
@@ -52,7 +54,7 @@ public class CustomerService {
     }
     
     // Create customer
-    public CustomerDTO createCustomer(CustomerDTO customerDTO) {
+    public CustomerDTO createCustomer(@Valid CustomerDTO customerDTO) {
         // Validate RoleID
         int roleID = customerDTO.getRole().getRoleID();
         System.out.println("role id.........." + roleID);
@@ -82,7 +84,7 @@ public class CustomerService {
 
 
     // Update customer
-    public CustomerDTO updateCustomer(int customerID, CustomerDTO updatedCustomerDTO) {
+    public CustomerDTO updateCustomer(int customerID,@Valid CustomerDTO updatedCustomerDTO) {
     	Customer customer = customerRepository.findById(customerID).orElse(null);
         if (customer != null) {
             

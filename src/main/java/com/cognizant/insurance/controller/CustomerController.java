@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cognizant.insurance.dto.CustomerDTO;
 import com.cognizant.insurance.entity.Customer;
 import com.cognizant.insurance.service.CustomerService;
+
+import jakarta.validation.Valid;
  
 @RestController
  @RequestMapping("/customers")
@@ -37,12 +39,12 @@ public class CustomerController {
     
     @PostMapping("/add")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public void createCustomer(@RequestBody CustomerDTO customerDTO) {
+    public void createCustomer(@Valid @RequestBody CustomerDTO customerDTO) {
         customerService.createCustomer(customerDTO);
     }
  
     @PutMapping("/update/{customerID}")
-    public CustomerDTO updateCustomer(@PathVariable int customerID, @RequestBody CustomerDTO updatedCustomerDTO) {
+    public CustomerDTO updateCustomer(@PathVariable int customerID, @Valid @RequestBody CustomerDTO updatedCustomerDTO) {
         return customerService.updateCustomer(customerID, updatedCustomerDTO);
     }
  

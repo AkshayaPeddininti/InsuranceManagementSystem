@@ -22,7 +22,7 @@ public class PolicyDTO {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int policyID;
 	
-	@Column
+	
     @NotBlank(message = "Policy name cannot be blank")
     @Size(min = 2, max = 50, message = "Policy name must be between 2 and 50 characters")
     @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "Policy name must contain only letters and spaces")

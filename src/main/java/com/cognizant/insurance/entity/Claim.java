@@ -24,6 +24,7 @@ public class Claim {
 	@JoinColumn(name="customerID")
 	private Customer customer;
 	
+	
 }
 
 

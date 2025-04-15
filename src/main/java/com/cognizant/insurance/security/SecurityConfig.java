@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.Customizer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -25,6 +26,11 @@ public class SecurityConfig {
 
     @Autowired
     private UserDetailsService userDetailsService;
+  
+    @Bean
+    PasswordEncoder passwordEncoder() {
+    	return new BCryptPasswordEncoder();
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -32,7 +38,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                .requestMatchers("/login", "/register").permitAll()
                .requestMatchers("/agents/add", "/agents/update/{agentID}","/agents/delete/{agentID}", "/agents/getall").hasRole("AGENT")
-                .requestMatchers("/customers/add", "/customers/delete/{customerID}", "/customers/update/{customerID}", "/customers/{customerID}", "/customers/getallcustomers").hasRole("CUSTOMER")
+                .requestMatchers("/customers/add", "/customers/delete/{customerID}", "/customers/update/{customerID}", "/customers/{customerID}", "/customers/getallcustomers","/claims/file","/claims/{claimId}").hasRole("CUSTOMER")
 
 
                         .anyRequest().authenticated())

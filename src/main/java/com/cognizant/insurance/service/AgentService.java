@@ -1,8 +1,10 @@
 package com.cognizant.insurance.service;
 
 import org.modelmapper.ModelMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -10,12 +12,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 import com.cognizant.insurance.entity.Agent;
 import com.cognizant.insurance.entity.Policy;
-import com.cognizant.insurance.entity.Role;
+
+import com.cognizant.insurance.entity.Users;
 import com.cognizant.insurance.dto.AgentDTO;
 import com.cognizant.insurance.dto.PolicyDTO;
+import com.cognizant.insurance.dto.UserDTO;
 import com.cognizant.insurance.repository.AgentRepository;
 import com.cognizant.insurance.repository.PolicyRepository;
-import com.cognizant.insurance.repository.RoleRepository;
+
+import com.cognizant.insurance.repository.UserRepo;
 
 import jakarta.validation.Valid;
 
@@ -26,16 +31,20 @@ public class AgentService {
     private AgentRepository agentRepository;
     
     @Autowired
-    private RoleRepository roleRepository;
+    private UserRepo userRepo;
+    
     @Autowired
     private PolicyRepository policyRepository;
     @Autowired
     private ModelMapper modelMapper; // Inject ModelMapper bean
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     // Convert from Agent to AgentDTO
     private AgentDTO convertToDTO(Agent agent) {
         return modelMapper.map(agent, AgentDTO.class); // Use ModelMapper
     }
+    
 
     // Convert from AgentDTO to Agent
     private Agent convertToEntity(AgentDTO agentDTO) {
@@ -58,33 +67,47 @@ public class AgentService {
     }
     
  //create
+//    public AgentDTO createAgent(@Valid AgentDTO agentDTO) {
+//        // Validate RoleID
+////        String role = agentDTO.getUser().getRole();
+////        System.out.println("role name"+role);
+////        
+////        if (role != "ROLE_AGENT") {
+////            throw new ResponseStatusException(
+////                HttpStatus.BAD_REQUEST,
+////                "Invalid Rolename. Accepted values are (ROLE_AGENT) and 402 (ROLE_CUSTOMER)."
+////            );
+////        }
+//
+//        // Fetch the User from the database
+//        
+//       
+//        
+//        		
+//
+//        // Map AgentDTO to Agent entity
+//        Agent agent = modelMapper.map(agentDTO, Agent.class);
+//        agent.setUser(user);
+//
+//        // Save Agent entity and return mapped AgentDTO
+//        Agent savedAgent = agentRepository.save(agent);
+//        return modelMapper.map(savedAgent, AgentDTO.class);
+//    }
+    
+    
+    
     public AgentDTO createAgent(@Valid AgentDTO agentDTO) {
-        // Validate RoleID
-        int roleID = agentDTO.getRole().getRoleID();
-        System.out.println("role id.........."+roleID);
-        
-        if (roleID != 401) {
-            throw new ResponseStatusException(
-                HttpStatus.BAD_REQUEST,
-                "Invalid RoleID. Accepted values are 401 (Agent) and 402 (Customer)."
-            );
-        }
-
-        // Fetch the Role from the database
-        Role role = roleRepository.findById(roleID)
-                                  .orElseThrow(() -> new ResponseStatusException(
-                                      HttpStatus.NOT_FOUND,
-                                      "Role with ID " + roleID + " not found."
-                                  ));
-
-        // Map AgentDTO to Agent entity
+        Users user = modelMapper.map(agentDTO.getUser(), Users.class);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        Users savedUser = userRepo.save(user);
+ 
         Agent agent = modelMapper.map(agentDTO, Agent.class);
-        agent.setRole(role);
-
-        // Save Agent entity and return mapped AgentDTO
+        agent.setUser(savedUser);
+ 
         Agent savedAgent = agentRepository.save(agent);
         return modelMapper.map(savedAgent, AgentDTO.class);
-    }
+        }
+   
 
 
     // Update agent
@@ -121,7 +144,7 @@ public class AgentService {
         Agent agent = agentRepository.findById(agentID)
                 .orElseThrow(() -> new RuntimeException("Agent not found"));
 
-        return policyRepository.findById(agentID)
+        return policyRepository.findById(agent.getAgentID())
                 .stream()
                 .map(policy -> modelMapper.map(policy, PolicyDTO.class))
                 .collect(Collectors.toList());

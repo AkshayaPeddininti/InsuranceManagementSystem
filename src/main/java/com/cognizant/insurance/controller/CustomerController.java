@@ -1,9 +1,11 @@
 package com.cognizant.insurance.controller;
  
+import java.lang.System.Logger;
 import java.util.List;
  
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,54 +19,41 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
  
 import com.cognizant.insurance.dto.CustomerDTO;
+import com.cognizant.insurance.dto.UpdateCustomerDetailsDTO;
 import com.cognizant.insurance.entity.Customer;
 import com.cognizant.insurance.service.CustomerService;
+
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @RestController
- @RequestMapping("/customers")
+@RequestMapping("/customers")
 public class CustomerController {
  
     @Autowired
     CustomerService customerService;
  
-    @GetMapping("/getallcustomers")
-    @PreAuthorize("hasRole('ROLE_CUSTOMER') and #customerID == principal.id")
-    public List<CustomerDTO> getAllCustomers() {
-        return customerService.getAllCustomers();
-    }
- 
-    @GetMapping("/{customerID}")
-    @PreAuthorize("hasRole('ROLE_CUSTOMER') and #customerID == principal.id")
-    public CustomerDTO getCustomer(@PathVariable int customerID) {
-        return customerService.getCustomerById(customerID);
-    }
-    
 
-//    @GetMapping("/csrf-token")
-//    public CsrfToken getCsrfToken(HttpServletRequest request) {
-//    	return (CsrfToken) request.getAttribute(  "_csrf");
-//}
-
-    
-    @PostMapping("/add")
-    @PreAuthorize("hasRole('ROLE_CUSTOMER') and #customerID == principal.id")
-    @ResponseStatus(code = HttpStatus.CREATED)
-    public void createCustomer(@Valid @RequestBody CustomerDTO customerDTO) {
-        customerService.createCustomer(customerDTO);
+    @PreAuthorize("#customerId==authentication.principal.id")
+    @DeleteMapping("/{customerId}")
+    public ResponseEntity<String> removeCustomer(@PathVariable int customerId) {
+        ResponseEntity<String> response = new ResponseEntity<>(customerService.removeCustomer(customerId), HttpStatus.OK);       
+        return response;
     }
- 
-    @PutMapping("/update/{customerID}")
-    @PreAuthorize("hasRole('ROLE_CUSTOMER') and #customerID == principal.id")
-    public CustomerDTO updateCustomer(@PathVariable int customerID, @Valid @RequestBody CustomerDTO updatedCustomerDTO) {
-        return customerService.updateCustomer(customerID, updatedCustomerDTO);
+    @PreAuthorize("#customerId==authentication.principal.id")
+    @GetMapping("/{customerId}")
+    public ResponseEntity<CustomerDTO> viewCustomer(@PathVariable int customerId) {
+       
+        ResponseEntity<CustomerDTO> response = new ResponseEntity<>(customerService.viewCustomer(customerId), HttpStatus.OK);
+       
+        return response;
     }
- 
-    @DeleteMapping("/delete/{customerID}")
-    @PreAuthorize("hasRole('ROLE_CUSTOMER') and #customerID == principal.id")
-    public void removeCustomer(@PathVariable int customerID) {
-        customerService.deleteCustomer(customerID);
-    }
+    @PreAuthorize("#customerId == authentication.principal.id")
+    @PutMapping("/{customerId}/updateDetails")
+    public ResponseEntity<CustomerDTO> updateCustomerDetails(@PathVariable int customerId,
+            @RequestBody @Valid UpdateCustomerDetailsDTO request) {
+        CustomerDTO updatedCustomer = customerService.updateCustomerDetails(customerId, request.getPhno());
+        return ResponseEntity.ok(updatedCustomer);
+    }  
 }

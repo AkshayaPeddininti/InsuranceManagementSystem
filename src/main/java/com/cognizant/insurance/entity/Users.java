@@ -1,59 +1,40 @@
 package com.cognizant.insurance.entity;
 
-
-
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 
-
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import lombok.Data;
 
 @Entity
-public class Users {
-    @Id
-    private int id;
-    private String username;
-    private String password;
-    private String role;
-
-    public String getRole() {
-		return this.role;
-	}
-
-	public void setRole(String role) {
-		this.role = role;
-	}
-
-	public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @Override
-    public String toString() {
-        return "Users{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                '}';
-    }
+@Data
+@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name="User",
+uniqueConstraints= {
+		@UniqueConstraint(columnNames= {"email"})
+		})
+public  class Users {
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private int userId;
+	@Column(nullable=false,length=50)
+	private String name;
+	@Column(nullable=false,length=254)
+	private String password;
+	@Column(nullable=false,length=254)
+	private String email;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(nullable=false)
+	private Role role;
+	
+	 
 }
-

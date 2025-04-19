@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.catalina.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,11 +18,15 @@ import com.cognizant.insurance.dto.ReturnUserDTO;
 import com.cognizant.insurance.entity.Agent;
 import com.cognizant.insurance.entity.Customer;
 import com.cognizant.insurance.entity.Policy;
+import com.cognizant.insurance.entity.Users;
 import com.cognizant.insurance.exception.AllException.AgentDetailNotFound;
 import com.cognizant.insurance.exception.AllException.CustomerDetailNotFound;
 import com.cognizant.insurance.repository.AgentRepository;
 import com.cognizant.insurance.repository.CustomerRepository;
 import com.cognizant.insurance.repository.PolicyRepository;
+import com.cognizant.insurance.repository.UserRepo;
+
+import jakarta.validation.Valid;
 
 
 
@@ -34,6 +39,9 @@ AgentRepository agentRepository ;
 
 @Autowired
 PolicyRepository policyRepository ;
+@Autowired
+UserRepo userRepository;
+
 
 BCryptPasswordEncoder encoder=new BCryptPasswordEncoder(12);
 
@@ -109,7 +117,35 @@ Agent agent=agentRepository.findById(agentId).orElseThrow(
                 .collect(Collectors.toList());
 	}
 
+	 public List<PolicyDTO> viewPolicyById(int agentID) {
+	        Users agent = userRepository.findById(agentID)
+	                .orElseThrow(() -> new RuntimeException("Agent not found"));
 
+	        return policyRepository.findById(agent.getUserId())
+	                .stream()
+	                .map(policy -> modelMapper.map(policy, PolicyDTO.class))
+	                .collect(Collectors.toList());
+	    }
+	
+//	   //update policy
+//	    public PolicyDTO updatePolicy(int policyID,PolicyDTO updatedPolicyDTO) {
+//	        Policy policy = policyRepository.findById(policyID)
+//	                .orElseThrow(() -> new RuntimeException("Policy not found"));
+//
+//	        policy.setPolicyName(updatedPolicyDTO.getPolicyName());
+//	        policy.setPremiumAmount(updatedPolicyDTO.getPremiumAmount());
+//	        policy.setCoverageDetails(updatedPolicyDTO.getCoverageDetails());
+//	        policy.setValidityPeriod(updatedPolicyDTO.getValidityPeriod());
+//
+//	        Policy updatedPolicy = policyRepository.save(policy);
+//	        return modelMapper.map(updatedPolicy, PolicyDTO.class);
+//	    }
+//	    //delete policy
+//	    public void deletePolicyForAgent(int policyID) {
+//	        policyRepository.deleteById(policyID);
+//	    }
+//	 
+	 
 //	public List<PolicyDTO> viewPolicyById(int agentId) {
 //		Agent agent = agentRepository.findById(agentId)
 //				.orElseThrow(() -> new AgentDetailNotFound("Agent with Id " + agentId + " not found."));
@@ -122,7 +158,7 @@ Agent agent=agentRepository.findById(agentId).orElseThrow(
 //		return ret;
 ////		return modelMapper.map(policy, PolicyDTO.class);
 //	}
-	
+
 	
 	
 }

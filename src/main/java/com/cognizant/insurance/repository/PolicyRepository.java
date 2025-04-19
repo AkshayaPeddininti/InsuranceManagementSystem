@@ -10,8 +10,9 @@ import com.cognizant.insurance.entity.Agent;
 import com.cognizant.insurance.entity.Policy;
 @Repository
 public interface PolicyRepository extends JpaRepository<Policy, Integer> {
-//
-// List<Policy> findByAgentId(Agent agent);
+
+//	List<Policy> findByAgentId(Agent agent);
+
 
 
 

@@ -1,6 +1,9 @@
 package com.cognizant.insurance.controller;
  
-import java.lang.System.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
  
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,36 +37,42 @@ import jakarta.validation.Valid;
 @RequestMapping("/customers")
 public class CustomerController {
  
+	private static final Logger logger = LoggerFactory.getLogger(CustomerController.class);
+	
     @Autowired
     CustomerService customerService;
  
     @GetMapping("/getAll")
     public ResponseEntity<List<ReturnUserDTO>> getALlCustomer() {
-        
+    	logger.info("Entering get all Customer method");
         ResponseEntity<List<ReturnUserDTO>> response = new ResponseEntity<>(customerService.getAllCustomer(), HttpStatus.OK);
-       
+        logger.info("Exiting get all Customer method");
         return response;
     }
 
     @PreAuthorize("#customerId==authentication.principal.id")
     @DeleteMapping("/{customerId}")
     public ResponseEntity<String> removeCustomer(@PathVariable int customerId) {
+    	logger.info("Entering remove Customer method with customerID: {} ", customerId);
         ResponseEntity<String> response = new ResponseEntity<>(customerService.removeCustomer(customerId), HttpStatus.OK);       
+        logger.info("Exiting remove Customer method with response {} ", response);
         return response;
     }
     
     @PutMapping("/update/{customerID}")
     public ResponseEntity<String> updateCustomer(@PathVariable int customerID,@RequestBody CustomerDTO customerDTO) {
-        ResponseEntity<String> response = new ResponseEntity<>(customerService.updateCustomer(customerID,customerDTO), HttpStatus.CREATED);       
+    	logger.info("Entering update Customer method with customerID: {} and customerDTO {} ", customerID,customerDTO);
+        ResponseEntity<String> response = new ResponseEntity<>(customerService.updateCustomer(customerID,customerDTO), HttpStatus.CREATED); 
+        logger.info("Exiting update Customer method with response {} ", response);
         return response;
     }
     
     @PreAuthorize("#customerId==authentication.principal.id")
     @GetMapping("/{customerId}")
     public ResponseEntity<CustomerDTO> viewCustomer(@PathVariable int customerId) {
-       
+    	logger.info("Entering view Customer method with customerID: {} ", customerId);
         ResponseEntity<CustomerDTO> response = new ResponseEntity<>(customerService.viewCustomer(customerId), HttpStatus.OK);
-       
+        logger.info("Exiting view Customer method with response: {} ", response);
         return response;
     }
     

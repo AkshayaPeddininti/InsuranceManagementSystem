@@ -2,10 +2,12 @@ package com.cognizant.insurance.controller;
  
 
 import org.slf4j.Logger;
+
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
- 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -24,9 +27,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cognizant.insurance.dto.AgentDTO;
 import com.cognizant.insurance.dto.CustomerDTO;
+import com.cognizant.insurance.dto.PolicyDTO;
 import com.cognizant.insurance.dto.ReturnUserDTO;
 import com.cognizant.insurance.dto.UserDTO;
 import com.cognizant.insurance.entity.Customer;
+import com.cognizant.insurance.service.AgentService;
 import com.cognizant.insurance.service.CustomerService;
 
 
@@ -41,6 +46,8 @@ public class CustomerController {
 	
     @Autowired
     CustomerService customerService;
+    
+
  
     @GetMapping("/getAll")
     public ResponseEntity<List<ReturnUserDTO>> getALlCustomer() {
@@ -76,6 +83,16 @@ public class CustomerController {
         return response;
     }
     
+
+
+            @PatchMapping("/{userId}/applyPolicy/{policyId}")
+            public ResponseEntity<PolicyDTO> applyPolicy(@PathVariable int userId, @PathVariable int policyId) {
+                PolicyDTO updatedPolicy = customerService.applyPolicy(userId, policyId);
+                return ResponseEntity.ok(updatedPolicy);
+            }
+        
+
+
 //  
 ////add customer
 //  @PostMapping("/add")

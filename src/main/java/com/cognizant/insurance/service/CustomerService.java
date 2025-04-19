@@ -1,5 +1,6 @@
 package com.cognizant.insurance.service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -10,11 +11,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.cognizant.insurance.dto.CustomerDTO;
+import com.cognizant.insurance.dto.PolicyDTO;
 import com.cognizant.insurance.dto.ReturnUserDTO;
 import com.cognizant.insurance.dto.UserDTO;
 import com.cognizant.insurance.entity.Customer;
+import com.cognizant.insurance.entity.Policy;
+import com.cognizant.insurance.exception.PolicyNotFoundException;
 import com.cognizant.insurance.exception.AllException.CustomerDetailNotFound;
 import com.cognizant.insurance.repository.CustomerRepository;
+import com.cognizant.insurance.repository.PolicyRepository;
 
 @Service
 public class CustomerService {
@@ -22,6 +27,8 @@ public class CustomerService {
 	ModelMapper modelMapper;
 	@Autowired
 	CustomerRepository customerRepository;
+	@Autowired
+	PolicyRepository policyRepository;
 
 	BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
@@ -73,7 +80,31 @@ public class CustomerService {
                 .collect(Collectors.toList());
 	}
 	
+
+
+	   
+	        public PolicyDTO applyPolicy(int userId, int policyId) {
+	            Policy policy = policyRepository.findById(policyId)
+	                    .orElseThrow(() -> new CustomerDetailNotFound("Policy with Id " + policyId + " not found."));
+	            
+	            Customer customer = customerRepository.findById(userId)
+	                    .orElseThrow(() -> new CustomerDetailNotFound("Customer with Id " + userId + " not found."));
+
+	            if (policy.getCustomer() == null) {
+	                policy.setCustomer(new HashSet<>());
+	            }
+	            policy.getCustomer().add(customer);
+	            policy = policyRepository.save(policy);
+
+	            return modelMapper.map(policy, PolicyDTO.class);
+	        }
+	    }
+
+	    
+	
+
+	
 	
 	
 
-}
+

@@ -1,5 +1,6 @@
 package com.cognizant.insurance.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -11,13 +12,16 @@ import org.springframework.stereotype.Service;
 
 import com.cognizant.insurance.dto.AgentDTO;
 import com.cognizant.insurance.dto.CustomerDTO;
+import com.cognizant.insurance.dto.PolicyDTO;
 import com.cognizant.insurance.dto.ReturnUserDTO;
 import com.cognizant.insurance.entity.Agent;
 import com.cognizant.insurance.entity.Customer;
+import com.cognizant.insurance.entity.Policy;
 import com.cognizant.insurance.exception.AllException.AgentDetailNotFound;
 import com.cognizant.insurance.exception.AllException.CustomerDetailNotFound;
 import com.cognizant.insurance.repository.AgentRepository;
 import com.cognizant.insurance.repository.CustomerRepository;
+import com.cognizant.insurance.repository.PolicyRepository;
 
 
 
@@ -27,6 +31,9 @@ public class AgentService {
 	ModelMapper modelMapper;
 @Autowired
 AgentRepository agentRepository ;
+
+@Autowired
+PolicyRepository policyRepository ;
 
 BCryptPasswordEncoder encoder=new BCryptPasswordEncoder(12);
 
@@ -80,6 +87,43 @@ Agent agent=agentRepository.findById(agentId).orElseThrow(
                 .map(agent -> modelMapper.map(agent, ReturnUserDTO.class))
                 .collect(Collectors.toList());
 	}
+
+	//..................Policies
+	
+//create policy
+	public PolicyDTO createPolicy(int agentId,PolicyDTO policyDTO) {
+		Policy policy= modelMapper.map(policyDTO,Policy.class);
+		Agent agent=agentRepository.findById(agentId)
+				.orElseThrow(()->new AgentDetailNotFound("Agent with Id "+agentId+" not found."));
+		policy.setAgent(agent);
+		policy=policyRepository.save(policy);
+		
+		return modelMapper.map(policy, PolicyDTO.class);
+	}
+
+
+	public List<PolicyDTO> getAllPolicies() {
+		List<Policy> policies=policyRepository.findAll();
+		return policies.stream()
+                .map(policy -> modelMapper.map(policy, PolicyDTO.class))
+                .collect(Collectors.toList());
+	}
+
+
+//	public List<PolicyDTO> viewPolicyById(int agentId) {
+//		Agent agent = agentRepository.findById(agentId)
+//				.orElseThrow(() -> new AgentDetailNotFound("Agent with Id " + agentId + " not found."));
+//		
+//		List<Policy> courseList=policyRepository.findByAgentId(agent);
+//		ArrayList<PolicyDTO> ret=new ArrayList<>();
+//		for(Policy obj:courseList) {
+//			ret.add(modelMapper.map(obj, PolicyDTO.class));
+//		}
+//		return ret;
+////		return modelMapper.map(policy, PolicyDTO.class);
+//	}
+	
+	
 	
 }
 

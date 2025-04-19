@@ -67,13 +67,13 @@ public class CustomerController {
         return response;
     }
     
-    
-  //add customer
-    @PostMapping("/add")
-    public ResponseEntity<CustomerDTO> createAgent(@RequestBody CustomerDTO customerDTO) {
-        ResponseEntity<CustomerDTO> response = new ResponseEntity<>(customerService.addCustomer(customerDTO), HttpStatus.CREATED);       
-        return response;
-    }
+//  
+////add customer
+//  @PostMapping("/add")
+//  public ResponseEntity<CustomerDTO> createAgent(@RequestBody CustomerDTO customerDTO) {
+//      ResponseEntity<CustomerDTO> response = new ResponseEntity<>(customerService.addCustomer(customerDTO), HttpStatus.CREATED);       
+//      return response;
+//  }
     
     
     

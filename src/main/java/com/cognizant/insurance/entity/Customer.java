@@ -11,6 +11,6 @@ import lombok.Data;
 @Entity
 @Data
 public class Customer extends Users{
-	private String phno;
+	private Long phno;
 }
 

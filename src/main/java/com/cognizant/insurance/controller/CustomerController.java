@@ -15,11 +15,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
- 
+
+import com.cognizant.insurance.dto.AgentDTO;
 import com.cognizant.insurance.dto.CustomerDTO;
-import com.cognizant.insurance.dto.UpdateCustomerDetailsDTO;
+import com.cognizant.insurance.dto.ReturnUserDTO;
+import com.cognizant.insurance.dto.UserDTO;
 import com.cognizant.insurance.entity.Customer;
 import com.cognizant.insurance.service.CustomerService;
 
@@ -34,6 +37,13 @@ public class CustomerController {
     @Autowired
     CustomerService customerService;
  
+    @GetMapping("/getAll")
+    public ResponseEntity<List<ReturnUserDTO>> getALlCustomer() {
+        
+        ResponseEntity<List<ReturnUserDTO>> response = new ResponseEntity<>(customerService.getAllCustomer(), HttpStatus.OK);
+       
+        return response;
+    }
 
     @PreAuthorize("#customerId==authentication.principal.id")
     @DeleteMapping("/{customerId}")
@@ -41,6 +51,13 @@ public class CustomerController {
         ResponseEntity<String> response = new ResponseEntity<>(customerService.removeCustomer(customerId), HttpStatus.OK);       
         return response;
     }
+    
+    @PutMapping("/update/{customerID}")
+    public ResponseEntity<String> updateCustomer(@PathVariable int customerID,@RequestBody CustomerDTO customerDTO) {
+        ResponseEntity<String> response = new ResponseEntity<>(customerService.updateCustomer(customerID,customerDTO), HttpStatus.CREATED);       
+        return response;
+    }
+    
     @PreAuthorize("#customerId==authentication.principal.id")
     @GetMapping("/{customerId}")
     public ResponseEntity<CustomerDTO> viewCustomer(@PathVariable int customerId) {
@@ -49,11 +66,16 @@ public class CustomerController {
        
         return response;
     }
-    @PreAuthorize("#customerId == authentication.principal.id")
-    @PutMapping("/{customerId}/updateDetails")
-    public ResponseEntity<CustomerDTO> updateCustomerDetails(@PathVariable int customerId,
-            @RequestBody @Valid UpdateCustomerDetailsDTO request) {
-        CustomerDTO updatedCustomer = customerService.updateCustomerDetails(customerId, request.getPhno());
-        return ResponseEntity.ok(updatedCustomer);
-    }  
+    
+    
+  //add customer
+    @PostMapping("/add")
+    public ResponseEntity<CustomerDTO> createAgent(@RequestBody CustomerDTO customerDTO) {
+        ResponseEntity<CustomerDTO> response = new ResponseEntity<>(customerService.addCustomer(customerDTO), HttpStatus.CREATED);       
+        return response;
+    }
+    
+    
+    
+
 }

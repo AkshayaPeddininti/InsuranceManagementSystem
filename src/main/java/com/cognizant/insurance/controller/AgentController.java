@@ -7,6 +7,7 @@ import java.util.List;
 import com.cognizant.insurance.dto.AgentDTO;
 import com.cognizant.insurance.dto.CustomerDTO;
 import com.cognizant.insurance.dto.PolicyDTO;
+import com.cognizant.insurance.dto.ReturnUserDTO;
 import com.cognizant.insurance.service.AgentService;
 
 import jakarta.validation.Valid;
@@ -42,4 +43,34 @@ public ResponseEntity<AgentDTO> viewAgent(@PathVariable int agentId) {
    
     return response;
 }
+
+//UPDATE agent details
+@PutMapping("/update/{agentId}")
+public ResponseEntity<String> updateAgent(@PathVariable int agentId,@RequestBody AgentDTO agentDTO) {
+    ResponseEntity<String> response = new ResponseEntity<>(agentService.updateAgent(agentId,agentDTO), HttpStatus.CREATED);       
+    return response;
+}
+
+//getallAgents
+@GetMapping("/getAll")
+public ResponseEntity<List<ReturnUserDTO>> getAllAgent() {
+    
+    ResponseEntity<List<ReturnUserDTO>> response = new ResponseEntity<>(agentService.getAllCustomer(), HttpStatus.OK);
+   
+    return response;
+    
+}
+
+//add agent
+@PostMapping("/add")
+public ResponseEntity<AgentDTO> createAgent(@RequestBody AgentDTO agentDTO) {
+    ResponseEntity<AgentDTO> response = new ResponseEntity<>(agentService.addAgent(agentDTO), HttpStatus.OK);       
+    return response;
+}
+
+
+
+
+
+
 }

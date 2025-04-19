@@ -47,9 +47,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(customizer -> customizer.disable())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/login", "/register").permitAll()
-                        .requestMatchers("/agents/add", "/agents/update/{agentID}", "/agents/delete/{agentID}", "/agents/getall").hasRole("AGENT")
-                        .requestMatchers("/customers/add", "/customers/delete/{customerID}", "/customers/update/{customerID}", "/customers/{customerID}", "/customers/getallcustomers", "/claims/file", "/claims/{claimId}","/{customerId}/updateDetails").hasRole("CUSTOMER")
+                		.requestMatchers("/login", "/register").permitAll()
+                        .requestMatchers("/agents/add", "/agents/update/{agentID}", "/agents/delete/{agentID}", "/agents/getall","/customers/getAll","/agents/getAll").hasRole("AGENT")
+                        .requestMatchers("/customers/add", "/customers/delete/{customerID}", "/customers/update/{customerID}", "/customers/{customerID}", "/customers/getallcustomers", "/claims/file", "/claims/{claimId}").hasRole("CUSTOMER")
                         .anyRequest().permitAll())
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

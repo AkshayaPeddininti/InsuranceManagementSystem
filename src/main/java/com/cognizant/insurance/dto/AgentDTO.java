@@ -15,6 +15,6 @@ public class AgentDTO {
 	private String email;
 	private String role;
 	
-	private int phno;
+	private Long phno;
 
 }

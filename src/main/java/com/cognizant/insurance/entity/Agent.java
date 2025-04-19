@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class Agent extends Users{
 	
-	private int phno;
+	private Long phno;
 	
 	
 }

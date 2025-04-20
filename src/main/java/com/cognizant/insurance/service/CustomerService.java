@@ -10,14 +10,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.cognizant.insurance.dto.ClaimDTO;
 import com.cognizant.insurance.dto.CustomerDTO;
 import com.cognizant.insurance.dto.PolicyDTO;
 import com.cognizant.insurance.dto.ReturnUserDTO;
 import com.cognizant.insurance.dto.UserDTO;
+import com.cognizant.insurance.entity.Claim;
 import com.cognizant.insurance.entity.Customer;
 import com.cognizant.insurance.entity.Policy;
 import com.cognizant.insurance.exception.PolicyNotFoundException;
 import com.cognizant.insurance.exception.AllException.CustomerDetailNotFound;
+import com.cognizant.insurance.repository.ClaimRepository;
 import com.cognizant.insurance.repository.CustomerRepository;
 import com.cognizant.insurance.repository.PolicyRepository;
 
@@ -29,6 +32,9 @@ public class CustomerService {
 	CustomerRepository customerRepository;
 	@Autowired
 	PolicyRepository policyRepository;
+	
+	@Autowired
+	ClaimRepository claimRepository;
 
 	BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
@@ -80,8 +86,14 @@ public class CustomerService {
                 .collect(Collectors.toList());
 	}
 	
-
-
+//get policies
+	public List<PolicyDTO> getAllPolicies() {
+		List<Policy> policies=policyRepository.findAll();
+		return policies.stream()
+                .map(policy -> modelMapper.map(policy, PolicyDTO.class))
+                .collect(Collectors.toList());
+	}
+//APPLY POLICY
 	   
 	        public PolicyDTO applyPolicy(int userId, int policyId) {
 	            Policy policy = policyRepository.findById(policyId)
@@ -98,7 +110,33 @@ public class CustomerService {
 
 	            return modelMapper.map(policy, PolicyDTO.class);
 	        }
-	    }
+	        
+	       
+
+
+	     // file a claim
+	        public ClaimDTO fileClaim(int userId, ClaimDTO claimDTO) {
+	            Policy policy = policyRepository.findById(claimDTO.getPolicyID())
+	                    .orElseThrow(() -> new CustomerDetailNotFound("Policy with Id " + claimDTO.getPolicyID() + " not found."));
+	            
+	            Customer customer = customerRepository.findById(userId)
+	                    .orElseThrow(() -> new CustomerDetailNotFound("Customer with Id " + userId + " not found."));
+
+	            Claim claim = modelMapper.map(claimDTO, Claim.class);
+	            claim.setPolicy(policy);
+	            claim.setCustomer(customer);
+	            claim.setStatus("Pending"); // Set status to "Pending" by default
+	            claim = claimRepository.save(claim);
+
+	            return modelMapper.map(claim, ClaimDTO.class);
+	        }
+	   	 public List<Claim> getClaimsByUserId(int customerID) {
+			    return claimRepository.findByCustomerUserId(customerID);
+			}
+
+	        }
+
+	    
 
 	    
 	

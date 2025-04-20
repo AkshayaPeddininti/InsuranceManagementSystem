@@ -17,8 +17,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.cognizant.insurance.dto.CustomerDTO;
+import com.cognizant.insurance.dto.PolicyDTO;
 import com.cognizant.insurance.dto.ReturnUserDTO;
 import com.cognizant.insurance.entity.Customer;
+import com.cognizant.insurance.entity.Policy;
 import com.cognizant.insurance.exception.AllException.CustomerDetailNotFound;
 import com.cognizant.insurance.repository.CustomerRepository;
 
@@ -108,6 +110,7 @@ public class CustomerServiceTest {
         });
     }
 
+    
     @Test
     public void testUpdateCustomer() {
         when(customerRepository.findById(1)).thenReturn(Optional.of(customer));
@@ -134,4 +137,6 @@ public class CustomerServiceTest {
         assertEquals(1, result.size());
         assertEquals("John Doe", result.get(0).getName());
     }
+    
+  
 }

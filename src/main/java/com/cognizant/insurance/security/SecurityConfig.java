@@ -25,13 +25,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 //usernamePasswordAuthenticationFilter responsible for autenticating usrdetails
 //for that { UserDetailsService } is used
 
-
-
-
-
-
-
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -48,8 +41,8 @@ public class SecurityConfig {
         return http.csrf(customizer -> customizer.disable())
                 .authorizeHttpRequests(request -> request
                 		.requestMatchers("/login", "/register").permitAll()
-                        .requestMatchers("/agents/add", "/agents/update/{agentID}", "/agents/delete/{agentID}", "/agents/getall","/customers/getAll","/agents/getAll","customers/add").hasRole("AGENT")
-                        .requestMatchers("/customers/add", "/customers/delete/{customerID}", "/customers/update/{customerID}", "/customers/{customerID}", "/customers/getallcustomers", "/claims/file", "/claims/{claimId}").hasRole("CUSTOMER")
+                        .requestMatchers( "/agents/update/{agentID}","agents/{agentId}","/customers/add","/customers/getAll","/agents/getAll","agents/add","agents/{agentId}/addpolicy","agents/claims/status/{status}","agents/claims/user/{customerID}","agents/{claimId}/updateStatus").hasRole("AGENT")
+                        .requestMatchers( "/customers/{customerID}", "/customers/update/{customerID}", "/customers/{userId}/applyPolicy/{policyId}", "/customers/{userId}/fileClaim","customers/claims/user/{customerID}").hasRole("CUSTOMER")
                         .anyRequest().permitAll())
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

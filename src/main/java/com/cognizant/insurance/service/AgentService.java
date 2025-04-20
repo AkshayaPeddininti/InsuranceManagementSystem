@@ -12,16 +12,20 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.cognizant.insurance.dto.AgentDTO;
+import com.cognizant.insurance.dto.ClaimDTO;
 import com.cognizant.insurance.dto.CustomerDTO;
 import com.cognizant.insurance.dto.PolicyDTO;
 import com.cognizant.insurance.dto.ReturnUserDTO;
+import com.cognizant.insurance.dto.UpdateClaimStatusDTO;
 import com.cognizant.insurance.entity.Agent;
+import com.cognizant.insurance.entity.Claim;
 import com.cognizant.insurance.entity.Customer;
 import com.cognizant.insurance.entity.Policy;
 import com.cognizant.insurance.entity.Users;
 import com.cognizant.insurance.exception.AllException.AgentDetailNotFound;
 import com.cognizant.insurance.exception.AllException.CustomerDetailNotFound;
 import com.cognizant.insurance.repository.AgentRepository;
+import com.cognizant.insurance.repository.ClaimRepository;
 import com.cognizant.insurance.repository.CustomerRepository;
 import com.cognizant.insurance.repository.PolicyRepository;
 import com.cognizant.insurance.repository.UserRepo;
@@ -41,6 +45,8 @@ AgentRepository agentRepository ;
 PolicyRepository policyRepository ;
 @Autowired
 UserRepo userRepository;
+@Autowired 
+ClaimRepository claimRepository;
 
 
 BCryptPasswordEncoder encoder=new BCryptPasswordEncoder(12);
@@ -110,12 +116,7 @@ Agent agent=agentRepository.findById(agentId).orElseThrow(
 	}
 
 
-	public List<PolicyDTO> getAllPolicies() {
-		List<Policy> policies=policyRepository.findAll();
-		return policies.stream()
-                .map(policy -> modelMapper.map(policy, PolicyDTO.class))
-                .collect(Collectors.toList());
-	}
+
 
 	 public List<PolicyDTO> viewPolicyById(int agentID) {
 	        Users agent = userRepository.findById(agentID)
@@ -127,39 +128,36 @@ Agent agent=agentRepository.findById(agentId).orElseThrow(
 	                .collect(Collectors.toList());
 	    }
 	
-//	   //update policy
-//	    public PolicyDTO updatePolicy(int policyID,PolicyDTO updatedPolicyDTO) {
-//	        Policy policy = policyRepository.findById(policyID)
-//	                .orElseThrow(() -> new RuntimeException("Policy not found"));
-//
-//	        policy.setPolicyName(updatedPolicyDTO.getPolicyName());
-//	        policy.setPremiumAmount(updatedPolicyDTO.getPremiumAmount());
-//	        policy.setCoverageDetails(updatedPolicyDTO.getCoverageDetails());
-//	        policy.setValidityPeriod(updatedPolicyDTO.getValidityPeriod());
-//
-//	        Policy updatedPolicy = policyRepository.save(policy);
-//	        return modelMapper.map(updatedPolicy, PolicyDTO.class);
-//	    }
-//	    //delete policy
-//	    public void deletePolicyForAgent(int policyID) {
-//	        policyRepository.deleteById(policyID);
-//	    }
-//	 
+
+
+	//.................claim
 	 
-//	public List<PolicyDTO> viewPolicyById(int agentId) {
-//		Agent agent = agentRepository.findById(agentId)
-//				.orElseThrow(() -> new AgentDetailNotFound("Agent with Id " + agentId + " not found."));
-//		
-//		List<Policy> courseList=policyRepository.findByAgentId(agent);
-//		ArrayList<PolicyDTO> ret=new ArrayList<>();
-//		for(Policy obj:courseList) {
-//			ret.add(modelMapper.map(obj, PolicyDTO.class));
-//		}
-//		return ret;
-////		return modelMapper.map(policy, PolicyDTO.class);
-//	}
+	 public List<Claim> getAllClaimsByStatus(String status) {
+		    return claimRepository.findByStatus(status);
+		}
+
+
+	 
+
+	     public Claim updateClaimStatus(int claimId, UpdateClaimStatusDTO updateClaimStatusDTO) {
+	         try {
+	             Claim claim = claimRepository.findById(claimId)
+	                     .orElseThrow(() -> new RuntimeException("Claim with Id " + claimId + " not found."));
+	             
+	             Policy policy = policyRepository.findById(updateClaimStatusDTO.getPolicyID())
+	                     .orElseThrow(() -> new RuntimeException("Policy with Id " + updateClaimStatusDTO.getPolicyID() + " not found."));
+	             
+	             claim.setPolicy(policy);
+	             claim.setStatus(updateClaimStatusDTO.getStatus()); // Update status to "Approved" or "Rejected"
+	             claim = claimRepository.save(claim);
+
+	             return claim;
+	         } catch (Exception e) {
+	             throw new RuntimeException("Error updating claim status: " + e.getMessage(), e);
+	         }
+	     }
+	 }
 
 	
-	
-}
+
 

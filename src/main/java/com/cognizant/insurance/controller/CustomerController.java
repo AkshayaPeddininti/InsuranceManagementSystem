@@ -26,10 +26,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cognizant.insurance.dto.AgentDTO;
+import com.cognizant.insurance.dto.ClaimDTO;
 import com.cognizant.insurance.dto.CustomerDTO;
 import com.cognizant.insurance.dto.PolicyDTO;
 import com.cognizant.insurance.dto.ReturnUserDTO;
 import com.cognizant.insurance.dto.UserDTO;
+import com.cognizant.insurance.entity.Claim;
 import com.cognizant.insurance.entity.Customer;
 import com.cognizant.insurance.service.AgentService;
 import com.cognizant.insurance.service.CustomerService;
@@ -83,23 +85,56 @@ public class CustomerController {
         return response;
     }
     
-
-
-            @PatchMapping("/{userId}/applyPolicy/{policyId}")
+    
+  //getallPolicies
+    @GetMapping("/getAllPolicies")
+    public ResponseEntity<List<PolicyDTO>> getAllPolicies() {
+    	logger.info("Entering get All Policies method");
+      ResponseEntity<List<PolicyDTO>> response = new ResponseEntity<>(customerService.getAllPolicies(), HttpStatus.OK);
+      logger.info("Exiting get AllPolicies method with response: {}",response);
+      return response;
+      
+    }
+    //.....policy
+    @PreAuthorize("#userId==authentication.principal.id")
+     @PatchMapping("/{userId}/applyPolicy/{policyId}")
             public ResponseEntity<PolicyDTO> applyPolicy(@PathVariable int userId, @PathVariable int policyId) {
-                PolicyDTO updatedPolicy = customerService.applyPolicy(userId, policyId);
+    	 logger.info("Entering applyPolicy method with customerID: {} AND policyId :{} ", userId,policyId);      
+    	 PolicyDTO updatedPolicy = customerService.applyPolicy(userId, policyId);
+    	 logger.info("Exiting applyPolicy method");  
                 return ResponseEntity.ok(updatedPolicy);
             }
+            
+     //...............CLAIM
+    			@PreAuthorize("#userId==authentication.principal.id")
+                @PatchMapping("/{userId}/fileClaim")
+                public ResponseEntity<ClaimDTO> fileClaim(@PathVariable int userId, @RequestBody ClaimDTO claimDTO) {
+                    logger.info("Entering file a claim method with customerID: {} ", userId);
+                    ClaimDTO filedClaim = customerService.fileClaim(userId, claimDTO);
+                    logger.info("Exiting file a claim method with customerID: {} ", userId);
+                    return ResponseEntity.ok(filedClaim);
+                }
+
+
         
+    			@PreAuthorize("#customerID==authentication.principal.id")
+    			@GetMapping("/claims/user/{customerID}")
+    			public ResponseEntity<List<Claim>> getClaimsByUserId(@PathVariable int customerID) {
+    				logger.info("Entering getClaimsByUserId method by userId",customerID);
+    			    List<Claim> claims = customerService.getClaimsByUserId(customerID);
+    			    logger.info("Exiting  getClaimsByUserId method");
+    			    return ResponseEntity.ok(claims);
+    			}
 
-
-//  
-////add customer
-//  @PostMapping("/add")
-//  public ResponseEntity<CustomerDTO> createAgent(@RequestBody CustomerDTO customerDTO) {
-//      ResponseEntity<CustomerDTO> response = new ResponseEntity<>(customerService.addCustomer(customerDTO), HttpStatus.CREATED);       
-//      return response;
-//  }
+  
+//add customer
+  @PostMapping("/add")
+  public ResponseEntity<CustomerDTO> createAgent(@RequestBody CustomerDTO customerDTO) {
+	  logger.info("Entering  createAgent method with customerDTO: {} ", customerDTO);
+      ResponseEntity<CustomerDTO> response = new ResponseEntity<>(customerService.addCustomer(customerDTO), HttpStatus.CREATED);       
+      logger.info("Exiting createAgent method with response: {} ", response);
+      return response;
+  }
     
     
     

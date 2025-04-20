@@ -174,18 +174,7 @@ public class AgentServiceTest {
         verify(policyRepository, times(1)).save(policy);
     }
 
-    @Test
-    public void testGetAllPolicies() {
-        List<Policy> policies = Arrays.asList(policy);
-        when(policyRepository.findAll()).thenReturn(policies);
-        when(modelMapper.map(policy, PolicyDTO.class)).thenReturn(policyDTO);
-
-        List<PolicyDTO> result = agentService.getAllPolicies();
-
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals(policyDTO.getPolicyName(), result.get(0).getPolicyName());
-    }
+  
 
     @Test
     public void testViewPolicyById() {

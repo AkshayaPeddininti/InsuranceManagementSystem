@@ -17,27 +17,16 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 @Data
 public class PolicyDTO {
-	@Id
-	@NotNull
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	
 	private int policyID;
 	
-    @NotBlank(message = "Policy name cannot be blank")
-    @Size(min = 2, max = 50, message = "Policy name must be between 2 and 50 characters")
-    @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "Policy name must contain only letters and spaces")
-	private String policyName;
+    private String policyName;
 	
-    @NotNull
-    @Positive
-	private float premiumAmount;
+    private float premiumAmount;
     
-    @NotNull
-    @Size(max = 500)
-	private String coverageDetails;
+    private String coverageDetails;
     
-    @NotNull
-    @Positive
-	private float validityPeriod;
+    private float validityPeriod;
 	
 	private Set<Customer> customer;
 	private Agent agent;

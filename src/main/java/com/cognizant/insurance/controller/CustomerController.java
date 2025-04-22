@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -119,9 +120,9 @@ public class CustomerController {
         
     			@PreAuthorize("#customerID==authentication.principal.id")
     			@GetMapping("/claims/user/{customerID}")
-    			public ResponseEntity<List<Claim>> getClaimsByUserId(@PathVariable int customerID) {
+    			public ResponseEntity<Optional<List<Claim>>> getClaimsByUserId(@PathVariable int customerID) {
     				logger.info("Entering getClaimsByUserId method by userId",customerID);
-    			    List<Claim> claims = customerService.getClaimsByUserId(customerID);
+    			    Optional<List<Claim>> claims = customerService.getClaimsByUserId(customerID);
     			    logger.info("Exiting  getClaimsByUserId method");
     			    return ResponseEntity.ok(claims);
     			}

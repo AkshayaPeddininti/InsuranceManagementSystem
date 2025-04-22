@@ -41,7 +41,7 @@ public class SecurityConfig {
         return http.csrf(customizer -> customizer.disable())
                 .authorizeHttpRequests(request -> request
                 		.requestMatchers("/login", "/register").permitAll()
-                        .requestMatchers( "/agents/update/{agentID}","agents/{agentId}","/customers/add","/customers/getAll","/agents/getAll","agents/add","agents/{agentId}/addpolicy","agents/claims/status/{status}","agents/claims/user/{customerID}","agents/{claimId}/updateStatus").hasRole("AGENT")
+                        .requestMatchers( "/agents/update/{agentID}","agents/{agentId}","/customers/add","/customers/getAll","/agents/getAll","agents/add","agents/{agentId}/addpolicy","agents/claims/status/{status}","agents/claims/user/{customerID}","agents/{claimId}/updateStatus","agents/{agentId}/policies").hasRole("AGENT")
                         .requestMatchers( "/customers/{customerID}", "/customers/update/{customerID}", "/customers/{userId}/applyPolicy/{policyId}", "/customers/{userId}/fileClaim","customers/claims/user/{customerID}").hasRole("CUSTOMER")
                         .anyRequest().permitAll())
                 .httpBasic(Customizer.withDefaults())

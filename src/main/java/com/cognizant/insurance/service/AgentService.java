@@ -119,10 +119,10 @@ Agent agent=agentRepository.findById(agentId).orElseThrow(
 
 
 	 public List<PolicyDTO> viewPolicyById(int agentID) {
-	        Users agent = userRepository.findById(agentID)
+	        Agent agent = agentRepository.findById(agentID)
 	                .orElseThrow(() -> new RuntimeException("Agent not found"));
 
-	        return policyRepository.findById(agent.getUserId())
+	        return policyRepository.findByAgentUserId(agent.getUserId())
 	                .stream()
 	                .map(policy -> modelMapper.map(policy, PolicyDTO.class))
 	                .collect(Collectors.toList());

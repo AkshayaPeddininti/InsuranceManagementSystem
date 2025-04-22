@@ -102,13 +102,13 @@ public ResponseEntity<PolicyDTO> createPolicy(@PathVariable int agentId,@Request
 
 
 //getbyId
-//@GetMapping("/{agentId}/policies")
-//public ResponseEntity<List<PolicyDTO>> viewPolicyById(@PathVariable int agentId) {
-//	logger.info("Entering get viewPolicyById method with agentId: {}",agentId);
-//    ResponseEntity<List<PolicyDTO>> response = new ResponseEntity<>(agentService.viewPolicyById(agentId), HttpStatus.OK);
-//    logger.info("Exiting get viewPolicyById method with response: {}",response);
-//    return response;
-//}
+@GetMapping("/{agentId}/policies")
+public ResponseEntity<List<PolicyDTO>> viewPolicyById(@PathVariable int agentId) {
+	logger.info("Entering get viewPolicyById method with agentId: {}",agentId);
+    ResponseEntity<List<PolicyDTO>> response = new ResponseEntity<>(agentService.viewPolicyById(agentId), HttpStatus.OK);
+    logger.info("Exiting get viewPolicyById method with response: {}",response);
+    return response;
+}
 
 @GetMapping("/claims/status/{status}")
 public ResponseEntity<List<Claim>> getAllClaimsByStatus(@PathVariable String status) {

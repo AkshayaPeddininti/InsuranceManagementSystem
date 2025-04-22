@@ -130,7 +130,7 @@ public class CustomerService {
 
 	            return modelMapper.map(claim, ClaimDTO.class);
 	        }
-	   	 public List<Claim> getClaimsByUserId(int customerID) {
+	   	 public Optional<List<Claim>> getClaimsByUserId(int customerID) {
 			    return claimRepository.findByCustomerUserId(customerID);
 			}
 

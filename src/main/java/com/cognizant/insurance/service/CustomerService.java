@@ -1,6 +1,7 @@
 package com.cognizant.insurance.service;
 
 import java.util.HashSet;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -15,10 +16,11 @@ import com.cognizant.insurance.dto.CustomerDTO;
 import com.cognizant.insurance.dto.PolicyDTO;
 import com.cognizant.insurance.dto.ReturnUserDTO;
 import com.cognizant.insurance.dto.UserDTO;
+import com.cognizant.insurance.dto.ViewPoliciesDTO;
 import com.cognizant.insurance.entity.Claim;
 import com.cognizant.insurance.entity.Customer;
 import com.cognizant.insurance.entity.Policy;
-import com.cognizant.insurance.exception.PolicyNotFoundException;
+import com.cognizant.insurance.exception.AllException.ClaimAmountError;
 import com.cognizant.insurance.exception.AllException.CustomerDetailNotFound;
 import com.cognizant.insurance.repository.ClaimRepository;
 import com.cognizant.insurance.repository.CustomerRepository;
@@ -87,10 +89,10 @@ public class CustomerService {
 	}
 	
 //get policies
-	public List<PolicyDTO> getAllPolicies() {
+	public List<ViewPoliciesDTO> getAllPolicies() {
 		List<Policy> policies=policyRepository.findAll();
 		return policies.stream()
-                .map(policy -> modelMapper.map(policy, PolicyDTO.class))
+                .map(policy -> modelMapper.map(policy, ViewPoliciesDTO.class))
                 .collect(Collectors.toList());
 	}
 //APPLY POLICY
@@ -121,7 +123,12 @@ public class CustomerService {
 	            
 	            Customer customer = customerRepository.findById(userId)
 	                    .orElseThrow(() -> new CustomerDetailNotFound("Customer with Id " + userId + " not found."));
-
+	            float claimAmount=claimDTO.getClaimAmount();
+	            float premiumAmount=policy.getPremiumAmount();
+	            if(claimAmount>premiumAmount)
+	            {
+	            	throw new ClaimAmountError("Claim amount should be less than Premium amount");
+	            }
 	            Claim claim = modelMapper.map(claimDTO, Claim.class);
 	            claim.setPolicy(policy);
 	            claim.setCustomer(customer);

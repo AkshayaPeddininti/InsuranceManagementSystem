@@ -32,6 +32,7 @@ import com.cognizant.insurance.dto.CustomerDTO;
 import com.cognizant.insurance.dto.PolicyDTO;
 import com.cognizant.insurance.dto.ReturnUserDTO;
 import com.cognizant.insurance.dto.UserDTO;
+import com.cognizant.insurance.dto.ViewPoliciesDTO;
 import com.cognizant.insurance.entity.Claim;
 import com.cognizant.insurance.entity.Customer;
 import com.cognizant.insurance.service.AgentService;
@@ -89,9 +90,9 @@ public class CustomerController {
     
   //getallPolicies
     @GetMapping("/getAllPolicies")
-    public ResponseEntity<List<PolicyDTO>> getAllPolicies() {
+    public ResponseEntity<List<ViewPoliciesDTO>> getAllPolicies() {
     	logger.info("Entering get All Policies method");
-      ResponseEntity<List<PolicyDTO>> response = new ResponseEntity<>(customerService.getAllPolicies(), HttpStatus.OK);
+      ResponseEntity<List<ViewPoliciesDTO>> response = new ResponseEntity<>(customerService.getAllPolicies(), HttpStatus.OK);
       logger.info("Exiting get AllPolicies method with response: {}",response);
       return response;
       

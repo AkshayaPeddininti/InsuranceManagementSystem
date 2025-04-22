@@ -19,7 +19,16 @@ public static class UserNotExist extends RuntimeException{
 	 }
 }
 
+public static class PolicyDetailNotFound extends RuntimeException{
+	public PolicyDetailNotFound(String msg){
+		 super(msg);
+	 }
+}
 
-
+public static class ClaimAmountError extends RuntimeException{
+	public ClaimAmountError(String msg){
+		 super(msg);
+	 }
+}
 
 }
